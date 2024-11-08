@@ -153,8 +153,8 @@ def main():
     biblioteca_service.registrar_prestamo(prestamo6)
     
     #Consultas
-    biblioteca_service.consultarPrestamosusuario(nuevo_estudiante)
-    biblioteca_service.consultarPrestamosusuario(nuevo_profesor)
+    biblioteca_service.consultarPrestamosUsuario(nuevo_estudiante)
+    biblioteca_service.consultarPrestamosUsuario(nuevo_profesor)
    
     #app = LibraryApp()
     #app.mainloop()

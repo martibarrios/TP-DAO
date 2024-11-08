@@ -44,16 +44,19 @@ class BibliotecaService:
 
 
     #REGISTRO DE UN NUEVO USUARIO
-    def registrar_usuario(self, usuario: Usuario):
-        print("--------REGISTRO DE USUARIO-------------")
-        # Detectamos el tipo de usuario en base a la clase
+    # Detectamos el tipo de usuario en base a la clase
+    def getTipoUsuario(self, usuario: Usuario):
         if isinstance(usuario, Estudiante):
-            tipo_usuario = 'estudiante'
+            return 'estudiante'
         elif isinstance(usuario, Profesor):
-            tipo_usuario = 'profesor'
+            return 'profesor'
         else:
             raise ValueError("El tipo de usuario no es valido.")
 
+    def registrar_usuario(self, usuario: Usuario):
+        print("--------REGISTRO DE USUARIO-------------")
+        # Detectamos el tipo de usuario en base a la clase
+        tipo_usuario = self.getTipoUsuario(usuario)
         query = """
         INSERT INTO usuarios (nombre, apellido, tipo_usuario, direccion, telefono)
         VALUES (?, ?, ?, ?, ?)
@@ -83,7 +86,7 @@ class BibliotecaService:
         libroEncontrado = self.db.fetch_query(query, paramsLibro, single=True)
         
         if(not libroEncontrado):
-            print(f"El libro con codigo isbn {paramsLibro} NO se encuentra registrado en la base de datos")
+            print(f"El libro con codigo isbn {paramsLibro} NO SE ENCUENTRA REGISTRADO en la base de datos")
             
             #Buscar al autor asociado al libro (ingresado por parámetro en el main) en la base de datos
             query = """
@@ -127,6 +130,7 @@ class BibliotecaService:
         parametersUsuario = (prestamo.usuario.id,)
         usuarioPrestamo = self.db.fetch_query(query, parametersUsuario, single=True)
 
+
         #Verificar que el libro asociado al préstamo exista en la BD
         query= """
         SELECT L.isbn FROM libros L WHERE L.isbn = ?
@@ -135,7 +139,8 @@ class BibliotecaService:
         libroPrestamo = self.db.fetch_query(query, parametersLibro, single=True)
 
         #Verificar que el libro asociado al préstamo esté disponible, que el usuario esté reg y que el libro también lo esté
-        if(usuarioPrestamo is not None and libroPrestamo is not None and self.consultarDispinibilidadLibro(prestamo.libro)):
+        if(usuarioPrestamo is not None and libroPrestamo is not None and self.consultarDispinibilidadLibro(prestamo.libro) and self.consultarPrestamosUsuario(prestamo.usuario)):
+            
             query = """
             INSERT INTO prestamos (id_usuario, isbn_libro, fecha_prestamo, fecha_devolucion)
             VALUES (?, ?, ?, ?)
@@ -153,8 +158,7 @@ class BibliotecaService:
             except Exception as e:
                 print(f"Error al registrar prestamo: {e}")
         else:
-            print(f"No se pudo registrar el prestamo del libro {str(prestamo.libro.titulo)}\n El libro y/o el usuario: {str(prestamo.usuario.nombre) + str(prestamo.usuario.apellido)} no se encuentra en la base de datos \n O el libro no se encuentra disponible.")
-
+            print(f"No se pudo registrar el prestamo del libro {str(prestamo.libro.titulo)}")
         
     #CONSULTAR LA DISPONIBILIDAD DE UN LIBRO
     def consultarDispinibilidadLibro(self, libro: Libro):
@@ -175,12 +179,8 @@ class BibliotecaService:
             return False
         
     #CONSULTAR CANTIDAD DE PRESTAMOS DE USUARIOS
-    def consultarPrestamosusuario(self, usuario : Usuario):
-        if isinstance(usuario, Estudiante):
-            tipo_usuario = 'estudiante'
-        elif isinstance(usuario, Profesor):
-            tipo_usuario = 'profesor'
-        
+    def consultarPrestamosUsuario(self, usuario : Usuario):
+        tipo_usuario = self.getTipoUsuario(usuario)
         query = """
         SELECT COUNT(*) FROM prestamos P JOIN usuarios U ON (P.id_usuario = U.id) WHERE U.tipo_usuario = ?       
         """
@@ -195,12 +195,12 @@ class BibliotecaService:
             return False
         elif(tipo_usuario == 'estudiante'):
             print("[ESTUDIANTE] - Tiene prestamos disponibles")
+            return True
         elif(tipo_usuario == 'profesor'):
             print("[PROFESOR] - Tiene prestamos disponibles")
+            return True
 
-    
 
-    #FALTA ASOCIAR LA CANT DE PRESTAMOS CON EL REGISTRO DE LOS PRÉSTAMOS
 
         
        
