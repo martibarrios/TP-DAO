@@ -4,6 +4,7 @@ from classes.Autor import Autor
 from classes.Libro import Libro
 from classes.Usuario import Usuario, Estudiante, Profesor
 from classes.Prestamo import Prestamo
+from datetime import datetime
 
 class BibliotecaService:
     def __init__(self):
@@ -97,21 +98,24 @@ class BibliotecaService:
             print(f"Se encontro el autor con id: {paramsAutor[0]}, {autorEncontrado}")
             
             if(autorEncontrado):
-                print("Autor encontrado con exito - se procede al registro del libro.")
+                print("Autor encontrado con exito")
 
-                #Insertar el libro en la base de datos
-                query = """
-                INSERT INTO libros (isbn, titulo, genero, ano_publicacion, id_autor, cantidad_disponible)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """
-                params = (libro.code_isbn, libro.titulo, libro.genero, libro.anio_publicacion, libro.autor.id, libro.cant_disponible)
-                try:
-                # Ejecuta la consulta y realiza el commit
-                    self.db.execute_query(query, params)
-                    print(f"-----Libro registrado con exito.-----")
-                    
-                except Exception as e:
-                    print(f"Error al registrar libro: {e}")
+                if(libro.anio_publicacion <= 2024 and libro.cant_disponible > 0):
+                    print(f"El año de publicacion del libro es: {libro.anio_publicacion} y se registra con: {libro.cant_disponible} ejemplares - Se procede al registro del libro")
+                    #Insertar el libro en la base de datos
+                    query = """
+                    INSERT INTO libros (isbn, titulo, genero, ano_publicacion, id_autor, cantidad_disponible)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """
+                    params = (libro.code_isbn, libro.titulo, libro.genero, libro.anio_publicacion, libro.autor.id, libro.cant_disponible)
+                    try:
+                    # Ejecuta la consulta y realiza el commit
+                        self.db.execute_query(query, params)
+                        print(f"-----Libro registrado con exito.-----")
+                        
+                    except Exception as e:
+                        print(f"Error al registrar libro: {e}")
+                else: print(f" ERROR - El año de publicacion ingresado del libro es: {libro.anio_publicacion} y se registra con: {libro.cant_disponible} ejemplares")
             else:
                 print("No se encontro el autor.")
         else:
@@ -199,9 +203,3 @@ class BibliotecaService:
         elif(tipo_usuario == 'profesor'):
             print("[PROFESOR] - Tiene prestamos disponibles")
             return True
-
-
-
-        
-       
-        
