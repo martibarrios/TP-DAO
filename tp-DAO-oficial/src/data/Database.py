@@ -5,6 +5,7 @@ class DatabaseSingleton:
     _instance = None
 
     def __new__(cls):
+        #Crea la instancia a la base de datos
         if cls._instance is None:
             cls._instance = super(DatabaseSingleton, cls).__new__(cls)
             cls._instance._initialize_connection()
@@ -50,6 +51,7 @@ class DatabaseSingleton:
             return None
 
     def close_connection(self):
+        #Cierra la conexion con la base de datos
         if self.connection:
             self.connection.close()
             self.connection = None

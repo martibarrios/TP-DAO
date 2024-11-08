@@ -7,6 +7,7 @@ from classes.Prestamo import *
 from windows.LibraryApp import LibraryApp
 from datetime import date
 
+
 def initializer_db():
     db = DatabaseSingleton()
 
@@ -110,6 +111,9 @@ def main():
     nuevo_libro5 = Libro(code_isbn="1D", titulo="Los juegos Del Hambre", genero="Ciencia Ficción", anio_publicacion=1990, autor = nuevo_autor3, cant_disponible=100)
     biblioteca_service.registrar_libro(nuevo_libro5) #Libro cuyo autor no está en la BD - ERROR
 
+    nuevo_libro6 = Libro(code_isbn="1F", titulo="Los juegos Del Hambre", genero="Ciencia Ficción", anio_publicacion=2020, autor = nuevo_autor, cant_disponible=0)
+    biblioteca_service.registrar_libro(nuevo_libro6)
+
     # Registro de un nuevo préstamo
     nuevo_prestamo = Prestamo(usuario=nuevo_profesor, libro=nuevo_libro, fecha_prestamo=date(2000, 10, 10), fecha_devolucion=date(2000, 11, 10)) 
     biblioteca_service.registrar_prestamo(nuevo_prestamo) #Prestamo con usuario y libro reg en la BD OK
@@ -155,6 +159,7 @@ def main():
     #Consultas
     biblioteca_service.consultarPrestamosUsuario(nuevo_estudiante)
     biblioteca_service.consultarPrestamosUsuario(nuevo_profesor)
+
    
     #app = LibraryApp()
     #app.mainloop()
