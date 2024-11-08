@@ -197,7 +197,8 @@ class BibliotecaService:
             print("[ESTUDIANTE] - Tiene prestamos disponibles")
         elif(tipo_usuario == 'profesor'):
             print("[PROFESOR] - Tiene prestamos disponibles")
-            
+
+    
 
     #FALTA ASOCIAR LA CANT DE PRESTAMOS CON EL REGISTRO DE LOS PRÉSTAMOS
 
