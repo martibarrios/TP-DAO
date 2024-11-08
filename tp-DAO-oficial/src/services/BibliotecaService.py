@@ -96,7 +96,7 @@ class BibliotecaService:
             autorEncontrado = self.db.fetch_query(query, paramsAutor, single=True)
             print(f"Se encontro el autor con id: {paramsAutor[0]}, {autorEncontrado}")
             
-            if(autorEncontrado):
+            if(autorEncontrado and libro.cant_disponible > 0): #Agregar que el libro tenga año de publicacion max el actual y que tenga cant disponible
                 print("Autor encontrado con exito - se procede al registro del libro.")
 
                 #Insertar el libro en la base de datos
@@ -180,6 +180,7 @@ class BibliotecaService:
         
     #CONSULTAR CANTIDAD DE PRESTAMOS DE USUARIOS
     def consultarPrestamosUsuario(self, usuario : Usuario):
+        print("--------CONSULTA DE PRESTAMOS DE LIBROS-------------")
         tipo_usuario = self.getTipoUsuario(usuario)
         query = """
         SELECT COUNT(*) FROM prestamos P JOIN usuarios U ON (P.id_usuario = U.id) WHERE U.tipo_usuario = ?       
@@ -200,7 +201,7 @@ class BibliotecaService:
             print("[PROFESOR] - Tiene prestamos disponibles")
             return True
 
-
+    
 
         
        
